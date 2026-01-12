@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { announcementsAPI } from '@/lib/api'
+import SiteFooter from '@/components/SiteFooter.vue'
 
 const announcements = ref([])
 const loading = ref(true)
@@ -41,12 +42,14 @@ onMounted(() => {
         <small>{{ new Date(announcement.created_at).toLocaleDateString() }}</small>
       </div>
     </div>
+
+    <site-footer />
   </div>
 </template>
 
 <style scoped>
 .home {
-  max-width: 800px;
+  max-width: 90vw;
   margin: 0 auto;
   padding: 2rem;
 }
