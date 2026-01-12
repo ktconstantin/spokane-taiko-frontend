@@ -4,6 +4,8 @@ import EventsCalendar from '@/views/EventsCalendar.vue'
 import Login from '@/views/Login.vue'
 import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
+import Performances from '@/views/Performances.vue'
+import Profile from '@/views/Profile.vue'
 import { requireAuth } from '@/router/guards.js'
 
 const router = createRouter({
@@ -23,6 +25,16 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: Login,
+    },
+    {
+      path: '/performances',
+      name: 'performances',
+      component: Performances,
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
     },
     {
       path: '/admin/announcements',

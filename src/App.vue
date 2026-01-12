@@ -19,8 +19,18 @@ async function handleLogout() {
         <router-link to="/" class="logo">Spokane Taiko</router-link>
 
         <div class="nav-links">
-          <router-link to="/">Home</router-link>
-          <router-link to="/events">Events</router-link>
+          <router-link to="/">
+            Home
+          </router-link>
+          <router-link to="/events">
+            Events
+          </router-link>
+          <router-link to="/performances">
+            Performances
+          </router-link>
+          <router-link to="/profile">
+            Profile
+          </router-link>
 
           <template v-if="user">
             <div class="admin-dropdown">
