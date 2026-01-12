@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import EventsCalendar from '@/views/EventsCalendar.vue'
 import Login from '@/views/Login.vue'
+import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
 import { requireAuth } from '@/router/guards.js'
 
@@ -22,6 +23,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: Login,
+    },
+    {
+      path: '/admin/announcements',
+      name: 'manage-announcements',
+      component: ManageAnnouncements,
+      beforeEnter: requireAuth,
     },
     {
       path: '/admin/cancellations',

@@ -8,7 +8,7 @@ const router = useRouter()
 
 async function handleLogout() {
   await signOut()
-  await router.push('/')
+  router.push('/')
 }
 </script>
 
@@ -23,7 +23,13 @@ async function handleLogout() {
           <router-link to="/events">Events</router-link>
 
           <template v-if="user">
-            <router-link to="/admin/cancellations">Admin</router-link>
+            <div class="admin-dropdown">
+              <span class="admin-label">Admin</span>
+              <div class="dropdown-content">
+                <router-link to="/admin/announcements">Announcements</router-link>
+                <router-link to="/admin/cancellations">Cancellations</router-link>
+              </div>
+            </div>
             <button @click="handleLogout" class="logout-btn">Logout</button>
           </template>
           <template v-else>
@@ -47,6 +53,7 @@ async function handleLogout() {
 body {
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: #f5f5f5;
 }
 
 .main-nav {
@@ -77,18 +84,71 @@ body {
   align-items: center;
 }
 
-.nav-links a {
+.nav-links > a {
   color: #2c3e50;
   text-decoration: none;
   font-weight: 500;
 }
 
-.nav-links a:hover {
+.nav-links > a:hover {
   color: #42b983;
 }
 
-.nav-links a.router-link-active {
+.nav-links > a.router-link-active {
   color: #42b983;
+}
+
+.admin-dropdown {
+  position: relative;
+}
+
+.admin-label {
+  color: #2c3e50;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 0; /* Add vertical padding to increase hover area */
+}
+
+.admin-label:hover {
+  color: #42b983;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-top: 0; /* Remove the gap */
+  padding-top: 0.5rem; /* Add padding inside instead */
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.admin-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  background: #f5f5f5;
+  color: #42b983;
+}
+
+.dropdown-content a:first-child {
+  border-radius: 4px 4px 0 0; /* Round top corners of first item */
+}
+
+.dropdown-content a:last-child {
+  border-radius: 0 0 4px 4px; /* Round bottom corners of last item */
 }
 
 .logout-btn {
