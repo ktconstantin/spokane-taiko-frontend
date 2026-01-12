@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/api'
+import { useAuth } from '@/composables/useAuth'
 
+const { user, isAuthenticated } = useAuth()
 const recurringEvents = ref([])
 const selectedEvent = ref(null)
 const dateToCancel = ref('')
@@ -52,40 +54,45 @@ onMounted(loadRecurringEvents)
 </script>
 
 <template>
-  <div class="manage-cancellations">
-    <h2>Manage Practice Cancellations</h2>
+  <div v-if="isAuthenticated()">
+    <div class="manage-cancellations">
+      <h2>Manage Practice Cancellations</h2>
 
-    <div class="cancel-form">
-      <h3>Cancel a Practice Date</h3>
+      <div class="cancel-form">
+        <h3>Cancel a Practice Date</h3>
 
-      <select v-model="selectedEvent" required>
-        <option :value="null">Select practice...</option>
-        <option v-for="event in recurringEvents" :key="event.id" :value="event.id">
-          {{ event.title }} ({{ event.recurrence_days?.join(', ') }})
-        </option>
-      </select>
+        <select v-model="selectedEvent" required>
+          <option :value="null">Select practice...</option>
+          <option v-for="event in recurringEvents" :key="event.id" :value="event.id">
+            {{ event.title }} ({{ event.recurrence_days?.join(', ') }})
+          </option>
+        </select>
 
-      <input type="date" v-model="dateToCancel" required />
+        <input type="date" v-model="dateToCancel" required />
 
-      <button @click="cancelDate">Cancel This Date</button>
-    </div>
+        <button @click="cancelDate">Cancel This Date</button>
+      </div>
 
-    <div class="cancelled-list">
-      <h3>Current Cancellations</h3>
+      <div class="cancelled-list">
+        <h3>Current Cancellations</h3>
 
-      <div v-for="event in recurringEvents" :key="event.id">
-        <h4>{{ event.title }}</h4>
+        <div v-for="event in recurringEvents" :key="event.id">
+          <h4>{{ event.title }}</h4>
 
-        <div v-if="event.cancelled_dates?.length > 0" class="cancelled-dates">
-          <div v-for="date in event.cancelled_dates" :key="date" class="cancelled-date">
-            <span>{{ new Date(date).toLocaleDateString() }}</span>
-            <button @click="removeCancellation(event.id, date)">Remove</button>
+          <div v-if="event.cancelled_dates?.length > 0" class="cancelled-dates">
+            <div v-for="date in event.cancelled_dates" :key="date" class="cancelled-date">
+              <span>{{ new Date(date).toLocaleDateString() }}</span>
+              <button @click="removeCancellation(event.id, date)">Remove</button>
+            </div>
           </div>
-        </div>
 
-        <div v-else class="no-cancellations">No cancelled dates</div>
+          <div v-else class="no-cancellations">No cancelled dates</div>
+        </div>
       </div>
     </div>
+  </div>
+  <div v-else>
+    Please log in to access this page.
   </div>
 </template>
 
