@@ -6,7 +6,7 @@ import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
 import Performances from '@/views/Performances.vue'
 import Profile from '@/views/Profile.vue'
-import { requireAuth } from '@/router/guards.js'
+import { requireAdmin } from '@/router/guards.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,13 +40,13 @@ const router = createRouter({
       path: '/admin/announcements',
       name: 'manage-announcements',
       component: ManageAnnouncements,
-      beforeEnter: requireAuth,
+      beforeEnter: requireAdmin,
     },
     {
       path: '/admin/cancellations',
       name: 'manage-cancellations',
       component: ManageCancellations,
-      beforeEnter: requireAuth,
+      beforeEnter: requireAdmin,
     },
   ],
 })

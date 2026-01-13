@@ -3,12 +3,12 @@ import { RouterView } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useRouter } from 'vue-router'
 
-const { user, signOut } = useAuth()
+const { user, isAdmin, signOut } = useAuth()
 const router = useRouter()
 
 async function handleLogout() {
   await signOut()
-  router.push('/')
+  await router.push('/')
 }
 </script>
 
@@ -19,21 +19,14 @@ async function handleLogout() {
         <router-link to="/" class="logo">Spokane Taiko</router-link>
 
         <div class="nav-links">
-          <router-link to="/">
-            Home
-          </router-link>
-          <router-link to="/events">
-            Events
-          </router-link>
-          <router-link to="/performances">
-            Performances
-          </router-link>
-          <router-link to="/profile">
-            Profile
-          </router-link>
+          <router-link to="/"> Home </router-link>
+          <router-link to="/events"> Events </router-link>
+          <router-link to="/performances"> Performances </router-link>
+          <router-link to="/profile"> Profile </router-link>
 
           <template v-if="user">
-            <div class="admin-dropdown">
+            <!-- Only show Admin dropdown if user is admin -->
+            <div v-if="isAdmin()" class="admin-dropdown">
               <span class="admin-label">Admin</span>
               <div class="dropdown-content">
                 <router-link to="/admin/announcements">Announcements</router-link>
