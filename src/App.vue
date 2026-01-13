@@ -2,12 +2,16 @@
 import { RouterView } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useRouter } from 'vue-router'
+import { useToast } from '@/composables/useToast'
+import CustomToast from '@/components/CustomToast.vue'
 
 const { user, isAdmin, signOut } = useAuth()
 const router = useRouter()
+const { showToast } = useToast()
 
 async function handleLogout() {
   await signOut()
+  showToast('Logged out successfully', 'success')
   await router.push('/')
 }
 </script>
@@ -43,6 +47,8 @@ async function handleLogout() {
     </nav>
 
     <RouterView />
+
+    <CustomToast />
   </div>
 </template>
 
