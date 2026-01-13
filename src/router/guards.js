@@ -42,8 +42,13 @@ export async function requireAdmin(to, from, next) {
   if (profile?.role === 'admin') {
     next()
   } else {
-    // Not an admin, redirect to home
-    alert('You do not have permission to access this page')
-    next({ name: 'home' })
+    // Not an admin, redirect to home (only if not already there)
+    if (from.name !== 'home') {
+      console.warn('Non-admin user attempted to access admin page:', to.path)
+      next({ name: 'home' })
+    } else {
+      // Already on home, just stay there
+      next(false)
+    }
   }
 }

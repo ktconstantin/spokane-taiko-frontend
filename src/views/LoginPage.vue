@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
+const route = useRoute()
 const { signIn } = useAuth()
 
 const email = ref('')
@@ -21,8 +22,17 @@ async function handleLogin() {
     error.value = signInError.message
     loading.value = false
   } else {
-    // Redirect to admin page after successful login
-    router.push('/admin/announcements')
+    // Check if there's a redirect query param
+    const redirectTo = route.query.redirect
+
+    // If redirect exists and it's not an admin page, go there
+    if (redirectTo && !redirectTo.startsWith('/admin')) {
+      await router.push(redirectTo)
+    }
+    // Otherwise, just go to home
+    else {
+      await router.push('/')
+    }
   }
 }
 </script>

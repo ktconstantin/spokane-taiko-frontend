@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import EventsCalendar from '@/views/EventsCalendar.vue'
-import Login from '@/views/Login.vue'
+import LoginPage from '@/views/LoginPage.vue'
 import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
 import Performances from '@/views/Performances.vue'
@@ -24,7 +24,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: LoginPage,
     },
     {
       path: '/performances',
