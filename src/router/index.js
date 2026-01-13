@@ -4,8 +4,8 @@ import EventsCalendar from '@/views/EventsCalendar.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
-import Performances from '@/views/Performances.vue'
-import Profile from '@/views/Profile.vue'
+import PerformancesPage from '@/views/PerformancesPage.vue'
+import ProfilePage from '@/views/ProfilePage.vue'
 import { requireAdmin } from '@/router/guards.js'
 
 const router = createRouter({
@@ -29,12 +29,12 @@ const router = createRouter({
     {
       path: '/performances',
       name: 'performances',
-      component: Performances,
+      component: PerformancesPage,
     },
     {
       path: '/profile',
       name: 'profile',
-      component: Profile,
+      component: ProfilePage,
     },
     {
       path: '/admin/announcements',
