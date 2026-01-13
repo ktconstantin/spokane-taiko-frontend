@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/api'
-import { useAuth } from '@/composables/useAuth'
+import { useToast } from '@/composables/useToast'
 
-const { user } = useAuth()
+const { showToast } = useToast()
 
 const announcements = ref([])
 const title = ref('')
@@ -36,9 +36,11 @@ async function createOrUpdateAnnouncement() {
       .eq('id', editingId.value)
 
     if (!error) {
-      alert('Announcement updated!')
+      showToast('Announcement updated!', 'success')
       resetForm()
       await loadAnnouncements()
+    } else {
+      showToast('Failed to update announcement', 'error')
     }
   } else {
     // Create new announcement
@@ -50,9 +52,11 @@ async function createOrUpdateAnnouncement() {
     ])
 
     if (!error) {
-      alert('Announcement posted!')
+      showToast('Announcement posted!', 'success')
       resetForm()
       await loadAnnouncements()
+    } else {
+      showToast('Failed to post announcement', 'error')
     }
   }
 
@@ -72,8 +76,10 @@ async function deleteAnnouncement(id) {
   const { error } = await supabase.from('announcements').delete().eq('id', id)
 
   if (!error) {
-    alert('Announcement deleted!')
+    showToast('Announcement deleted!', 'success')
     await loadAnnouncements()
+  } else {
+    showToast('Failed to delete announcement', 'error')
   }
 }
 
