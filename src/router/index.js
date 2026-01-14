@@ -6,6 +6,7 @@ import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
 import PerformancesPage from '@/views/PerformancesPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
+import AboutPage from '@/views/AboutPage.vue'
 import { requireAdmin } from '@/router/guards.js'
 
 const router = createRouter({
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/events',
       name: 'events',
       component: EventsCalendar,
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: AboutPage,
     },
     {
       path: '/login',

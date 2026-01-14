@@ -26,6 +26,7 @@ async function handleLogout() {
 
         <div class="nav-links">
           <router-link to="/"> Home </router-link>
+          <router-link to="/about"> About </router-link>
           <div class="events-dropdown">
             <span class="events-label">Events</span>
             <div class="dropdown-content">
