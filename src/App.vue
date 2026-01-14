@@ -26,8 +26,13 @@ async function handleLogout() {
 
         <div class="nav-links">
           <router-link to="/"> Home </router-link>
-          <router-link to="/events"> Events </router-link>
-          <router-link to="/performances"> Performances </router-link>
+          <div class="events-dropdown">
+            <span class="events-label">Events</span>
+            <div class="dropdown-content">
+              <router-link to="/events">Calendar</router-link>
+              <router-link to="/performances">Performances</router-link>
+            </div>
+          </div>
           <router-link to="/profile"> Profile </router-link>
 
           <template v-if="user">
@@ -108,6 +113,40 @@ body {
 
 .nav-links > a.router-link-active {
   color: #42b983;
+}
+
+/* Events Dropdown */
+.events-dropdown {
+  position: relative;
+}
+
+.events-label {
+  color: #2c3e50;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.events-label:hover {
+  color: #42b983;
+}
+
+.events-dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-top: 0;
+  padding-top: 0.5rem;
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.events-dropdown:hover .dropdown-content {
+  display: block;
 }
 
 .admin-dropdown {
