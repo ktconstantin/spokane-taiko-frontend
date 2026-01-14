@@ -11,7 +11,6 @@ const loading = ref(true)
 const error = ref(null)
 
 async function loadAnnouncements() {
-  console.log('Starting to load announcements...')
   try {
     loading.value = true
     const response = await announcementsAPI.getAll()

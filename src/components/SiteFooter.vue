@@ -4,7 +4,7 @@ const currentYear = new Date().getFullYear()
 const socialLinks = {
   facebook: 'https://facebook.com/SpokaneTaiko',
   instagram: 'https://instagram.com/spokanetaiko',
-  youtube: 'https://youtube.com/user/SpokaneTaiko'
+  youtube: 'https://youtube.com/user/SpokaneTaiko',
 }
 
 const contactEmail = 'spokanetaiko@live.com'
@@ -16,6 +16,8 @@ const contactEmail = 'spokanetaiko@live.com'
       <div class="footer-section">
         <h3>Contact Us</h3>
         <p>
+          If you are looking to learn more about taiko or would like to inquire about a performance,
+          please email us at
           <a :href="`mailto:${contactEmail}`" class="email-link">
             {{ contactEmail }}
           </a>
@@ -90,7 +92,7 @@ const contactEmail = 'spokanetaiko@live.com'
       <div class="footer-section">
         <h3>Spokane Taiko</h3>
         <p class="footer-description">
-          A community-based taiko drumming group in Spokane, Washington
+          A community-based Japanese-style drumming group in Spokane, Washington
         </p>
       </div>
     </div>
