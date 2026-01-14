@@ -20,7 +20,9 @@ async function handleLogout() {
   <div id="app">
     <nav class="main-nav">
       <div class="nav-content">
-        <router-link to="/" class="logo">Spokane Taiko</router-link>
+        <router-link to="/" class="logo">
+          <img src="/spokane_taiko_logo.png" alt="Spokane Taiko Logo" class="logo-image" />
+        </router-link>
 
         <div class="nav-links">
           <router-link to="/"> Home </router-link>
@@ -91,6 +93,7 @@ body {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  align-self: flex-end;
 }
 
 .nav-links > a {
@@ -172,5 +175,20 @@ body {
 
 .logout-btn:hover {
   background: #c0392b;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.logo-image {
+  height: 15vh;
+  width: auto;
 }
 </style>
