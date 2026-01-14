@@ -2,26 +2,34 @@
 import { ref, onMounted } from 'vue'
 import { announcementsAPI } from '@/lib/api'
 import SiteFooter from '@/components/SiteFooter.vue'
+import { useAuth } from '@/composables/useAuth'
+
+const { loading: authLoading } = useAuth()
 
 const announcements = ref([])
 const loading = ref(true)
 const error = ref(null)
 
 async function loadAnnouncements() {
+  console.log('Starting to load announcements...')
   try {
     loading.value = true
     const response = await announcementsAPI.getAll()
     announcements.value = response.data
   } catch (err) {
+    console.error('Error loading announcements:', err)
     error.value = 'Failed to load announcements'
-    console.error(err)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(() => {
-  loadAnnouncements()
+onMounted(async () => {
+  while (authLoading.value) {
+    await new Promise((resolve) => setTimeout(resolve, 50))
+  }
+
+  await loadAnnouncements()
 })
 </script>
 
