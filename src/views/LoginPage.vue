@@ -11,6 +11,11 @@ const email = ref('')
 const password = ref('')
 const error = ref(null)
 const loading = ref(false)
+const showPassword = ref(false)
+
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value
+}
 
 async function handleLogin() {
   error.value = null
@@ -40,7 +45,7 @@ async function handleLogin() {
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h1>Admin Login</h1>
+      <h1>Login</h1>
 
       <form @submit.prevent="handleLogin">
         <div class="form-group">
@@ -50,7 +55,56 @@ async function handleLogin() {
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input id="password" v-model="password" type="password" placeholder="••••••••" required />
+          <div class="password-input-wrapper">
+            <input
+              id="password"
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="••••••••"
+              required
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              @click="togglePasswordVisibility"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <!-- Eye Icon (show) -->
+              <svg
+                v-if="!showPassword"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <!-- Eye Slash Icon (hide) -->
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                ></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div v-if="error" class="error-message">
@@ -72,6 +126,7 @@ async function handleLogin() {
   align-items: center;
   justify-content: center;
   background: #f5f5f5;
+  padding: 1rem;
 }
 
 .login-card {
@@ -100,6 +155,12 @@ label {
   font-weight: 500;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 input {
   width: 100%;
   padding: 0.75rem;
@@ -108,12 +169,39 @@ input {
   font-size: 1rem;
 }
 
+.password-input-wrapper input {
+  padding-right: 3rem; /* Make room for the eye icon */
+}
+
 input:focus {
   outline: none;
   border-color: #42b983;
 }
 
-button {
+.toggle-password {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f8c8d;
+  transition: color 0.2s;
+  width: auto;
+}
+
+.toggle-password:hover {
+  color: #2c3e50;
+}
+
+.toggle-password svg {
+  display: block;
+}
+
+button[type='submit'] {
   width: 100%;
   padding: 0.75rem;
   background: #42b983;
@@ -122,13 +210,14 @@ button {
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
+  margin-top: 0.5rem;
 }
 
-button:hover:not(:disabled) {
+button[type='submit']:hover:not(:disabled) {
   background: #359268;
 }
 
-button:disabled {
+button[type='submit']:disabled {
   background: #95a5a6;
   cursor: not-allowed;
 }
@@ -139,5 +228,20 @@ button:disabled {
   padding: 0.75rem;
   border-radius: 4px;
   margin-bottom: 1rem;
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
 }
 </style>
