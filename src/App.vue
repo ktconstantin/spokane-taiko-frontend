@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/useToast'
 import CustomToast from '@/components/CustomToast.vue'
 
-const { user, isAdmin, signOut } = useAuth()
+const { user, isAdmin, signOut, isAuthenticated } = useAuth()
 const router = useRouter()
 const { showToast } = useToast()
 
@@ -53,7 +53,9 @@ async function handleLogout() {
             <span class="events-label">Events</span>
             <div class="dropdown-content">
               <router-link to="/events" @click="closeMobileMenu">Calendar</router-link>
-              <router-link to="/performances" @click="closeMobileMenu">Performances</router-link>
+              <router-link v-if="isAuthenticated()" to="/performances" @click="closeMobileMenu">
+                Performances
+              </router-link>
             </div>
           </div>
 

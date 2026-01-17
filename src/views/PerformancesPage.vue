@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/api'
 import { useAuth } from '@/composables/useAuth'
 
-const { user } = useAuth()
+const { user, isAuthenticated } = useAuth()
 
 const events = ref([])
 const registrations = ref([])
@@ -216,7 +216,7 @@ onMounted(loadData)
           </div>
         </div>
 
-        <div class="attendance-summary">
+        <div v-if="isAuthenticated()" class="attendance-summary">
           <div class="summary-header">
             <h3>Attendance Summary</h3>
             <button @click="toggleEventExpanded(event.id)" class="toggle-details-btn">

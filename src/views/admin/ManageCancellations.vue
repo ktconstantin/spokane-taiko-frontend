@@ -54,7 +54,7 @@ onMounted(loadRecurringEvents)
 </script>
 
 <template>
-  <div v-if="isAdmin">
+  <div v-if="isAdmin()">
     <div class="manage-cancellations">
       <h2>Manage Practice Cancellations</h2>
 
