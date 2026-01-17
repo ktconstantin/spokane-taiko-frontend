@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/api'
 import { useAuth } from '@/composables/useAuth'
 
-const { user, isAuthenticated } = useAuth()
+const { isAdmin } = useAuth()
 const recurringEvents = ref([])
 const selectedEvent = ref(null)
 const dateToCancel = ref('')
@@ -54,7 +54,7 @@ onMounted(loadRecurringEvents)
 </script>
 
 <template>
-  <div v-if="isAuthenticated()">
+  <div v-if="isAdmin">
     <div class="manage-cancellations">
       <h2>Manage Practice Cancellations</h2>
 
@@ -91,9 +91,7 @@ onMounted(loadRecurringEvents)
       </div>
     </div>
   </div>
-  <div v-else>
-    Please log in to access this page.
-  </div>
+  <div v-else>Admin level is required to access this page.</div>
 </template>
 
 <style scoped>
