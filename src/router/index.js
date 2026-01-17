@@ -7,7 +7,7 @@ import ManageCancellations from '@/views/admin/ManageCancellations.vue'
 import PerformancesPage from '@/views/PerformancesPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
 import AboutPage from '@/views/AboutPage.vue'
-import { requireAdmin } from '@/router/guards.js'
+import { requireAdmin, requireAuth } from '@/router/guards.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,11 +36,13 @@ const router = createRouter({
       path: '/performances',
       name: 'performances',
       component: PerformancesPage,
+      beforeEnter: requireAuth,
     },
     {
       path: '/profile',
       name: 'profile',
       component: ProfilePage,
+      beforeEnter: requireAuth,
     },
     {
       path: '/admin/announcements',
