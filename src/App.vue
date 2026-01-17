@@ -59,7 +59,9 @@ async function handleLogout() {
             </div>
           </div>
 
-          <router-link to="/profile" @click="closeMobileMenu"> Profile </router-link>
+          <router-link v-if="isAuthenticated()" to="/profile" @click="closeMobileMenu">
+            Profile
+          </router-link>
 
           <template v-if="user">
             <!-- Admin Dropdown -->
