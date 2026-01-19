@@ -68,6 +68,7 @@ async function handleLogout() {
             <div v-if="isAdmin()" class="admin-dropdown">
               <span class="admin-label">Admin</span>
               <div class="dropdown-content">
+                <router-link to="/admin/events" @click="closeMobileMenu">Events</router-link>
                 <router-link to="/admin/announcements" @click="closeMobileMenu"
                   >Announcements</router-link
                 >

@@ -4,6 +4,7 @@ import EventsCalendar from '@/views/EventsCalendar.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
+import ManageEvents from '../views/admin/ManageEvents.vue'
 import PerformancesPage from '@/views/PerformancesPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
 import AboutPage from '@/views/AboutPage.vue'
@@ -54,6 +55,12 @@ const router = createRouter({
       path: '/admin/cancellations',
       name: 'manage-cancellations',
       component: ManageCancellations,
+      beforeEnter: requireAdmin,
+    },
+    {
+      path: '/admin/events',
+      name: 'manage-events',
+      component: ManageEvents,
       beforeEnter: requireAdmin,
     },
   ],

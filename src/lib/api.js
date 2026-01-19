@@ -5,7 +5,6 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
-// Announcements API
 export const announcementsAPI = {
   async getAll() {
     const { data, error } = await supabase
@@ -22,5 +21,37 @@ export const announcementsAPI = {
 
     if (error) throw error
     return { data: data[0] }
+  },
+}
+
+export const eventsAPI = {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return { data }
+  },
+
+  async create(eventData) {
+    const { data, error } = await supabase.from('events').insert([eventData]).select()
+
+    if (error) throw error
+    return { data: data[0] }
+  },
+
+  async update(id, eventData) {
+    const { data, error } = await supabase.from('events').update(eventData).eq('id', id).select()
+
+    if (error) throw error
+    return { data: data[0] }
+  },
+
+  async delete(id) {
+    const { error } = await supabase.from('events').delete().eq('id', id)
+
+    if (error) throw error
   },
 }
