@@ -85,7 +85,9 @@ async function handleLogout() {
       </div>
     </nav>
 
-    <RouterView />
+    <Transition name="fade" mode="out-in">
+      <RouterView />
+    </Transition>
 
     <CustomToast />
   </div>
@@ -390,5 +392,26 @@ body {
     gap: 1rem;
     font-size: 0.9rem;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.fade-enter-active {
+  transition-delay: 0.1s;
 }
 </style>
