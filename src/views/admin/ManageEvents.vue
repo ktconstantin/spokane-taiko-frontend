@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { supabase } from '@/lib/api'
+// import { supabase } from '@/lib/api'
 import { eventsAPI } from '@/lib/api'
 import { useToast } from '@/composables/useToast'
 
@@ -32,85 +32,45 @@ async function saveEvent() {
 
   // Validation
   if (!formData.value.title || !formData.value.event_type) {
-    console.log('3. VALIDATION FAILED: missing title or event_type')
     showToast('Please fill in required fields', 'error')
     return
   }
 
-  console.log('3. Basic validation passed')
-
-  if (formData.value.is_recurring) {
-    if (formData.value.recurrence_days.length === 0 || !formData.value.recurring_start_time) {
-      console.log('4. VALIDATION FAILED: recurring event missing data')
-      showToast('Please select days and start time for recurring event', 'error')
-      return
-    }
-  } else {
-    if (!formData.value.event_date || !formData.value.start_time) {
-      console.log('4. VALIDATION FAILED: one-time event missing data')
-      showToast('Please select date and time for one-time event', 'error')
-      return
-    }
+  if (!formData.value.event_date || !formData.value.start_time) {
+    showToast('Please select date and time for event', 'error')
+    return
   }
 
   console.log('4. All validation passed')
   loading.value = true
 
   try {
-    console.log('5. Inside try block')
-
-    // Prepare data based on event type
+    // Prepare data - simplified for one-time events only
     const eventData = {
       title: formData.value.title,
       description: formData.value.description,
       event_type: formData.value.event_type,
       location: formData.value.location,
-      is_recurring: formData.value.is_recurring,
+      is_recurring: false,
+      event_date: formData.value.event_date,
+      start_time: formData.value.start_time,
+      end_time: formData.value.end_time || null,
     }
-
-    console.log('6. Base eventData created:', eventData)
-
-    if (formData.value.is_recurring) {
-      console.log('7a. Processing recurring event')
-      eventData.recurrence_days = formData.value.recurrence_days
-      eventData.recurring_start_time = formData.value.recurring_start_time
-      eventData.recurring_end_time = formData.value.recurring_end_time || null
-      eventData.event_date = null
-      eventData.start_time = null
-      eventData.end_time = null
-    } else {
-      console.log('7b. Processing one-time event')
-      eventData.event_date = formData.value.event_date
-      eventData.start_time = formData.value.start_time
-      eventData.end_time = formData.value.end_time || null
-      eventData.recurrence_days = null
-      eventData.recurring_start_time = null
-      eventData.recurring_end_time = null
-    }
-
-    console.log('8. Final eventData:', eventData)
-    console.log('9. About to call Supabase insert')
 
     if (editingId.value) {
-      console.log('Updating event:', editingId.value)
-      const { error } = await supabase.from('events').update(eventData).eq('id', editingId.value)
-
-      if (error) throw error
+      await eventsAPI.update(editingId.value, eventData)
       showToast('Event updated!', 'success')
     } else {
-      console.log('Creating new event')
-      const { error } = await supabase.from('events').insert([eventData])
-
-      if (error) throw error
+      await eventsAPI.create(eventData)
       showToast('Event created!', 'success')
     }
+
     resetForm()
     await loadEvents()
   } catch (err) {
-    console.error('ERROR:', err)
+    console.error('Error saving event:', err)
     showToast(`Failed to save event: ${err.message}`, 'error')
   } finally {
-    console.log('11. In finally block')
     loading.value = false
   }
 }
@@ -126,9 +86,6 @@ function editEvent(event) {
     event_date: event.event_date || '',
     start_time: event.start_time || '',
     end_time: event.end_time || '',
-    recurrence_days: event.recurrence_days || [],
-    recurring_start_time: event.recurring_start_time || '',
-    recurring_end_time: event.recurring_end_time || '',
   }
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }

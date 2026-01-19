@@ -36,17 +36,15 @@ export const eventsAPI = {
   },
 
   async create(eventData) {
-    const { data, error } = await supabase.from('events').insert([eventData]).select()
+    const { error } = await supabase.from('events').insert([eventData])
 
     if (error) throw error
-    return { data: data[0] }
   },
 
   async update(id, eventData) {
-    const { data, error } = await supabase.from('events').update(eventData).eq('id', id).select()
+    const { error } = await supabase.from('events').update(eventData).eq('id', id)
 
     if (error) throw error
-    return { data: data[0] }
   },
 
   async delete(id) {
