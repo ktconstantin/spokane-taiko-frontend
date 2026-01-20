@@ -7,48 +7,33 @@ import SiteFooter from '@/components/SiteFooter.vue'
     <h1>About Spokane Taiko</h1>
 
     <section class="about-section">
-      <h2>What We Do</h2>
+      <h2>Who We Are</h2>
       <p>
-        Spokane Taiko is a non-profit organization that seeks to build community and create
-        awareness through the traditional music and rhythms of Japan. Members experience a journey
-        in building relationships, physical stamina, focus, and cooperation (just to name a few).
-        These skills not only contribute to a fine-tuned kumi-daiko ensemble, but to a harmonious
-        lifestyle even outside the group. The culture that surrounds the art of taiko is one that
-        involves patience and discipline in every aspect of life.
+        <strong>Spokane Taiko</strong> is a vibrant drum and percussion ensemble dedicated to
+        sharing and celebrating Japanese musical traditions. Founded in 1997, we are a nonprofit
+        organization that helps members grow through the four pillars of
+        <strong>respect, strength of spirit, strength of body, and technique.</strong> Through
+        Taiko, we promote harmony, patience, and discipline in everyday life.
       </p>
-    </section>
 
-    <section class="about-section">
-      <h2>Our Story</h2>
       <p>
-        Spokane Taiko was originally founded in October 1997 by Michiko Takaoka (Mukogawa Fort
-        Wright Girls Institute) and Atsumi McCauley. In December 2010, Aaron Mark became the
-        director until he retired in October of 2016.
+        Spokane Taiko began at the U.S. campus of <strong>Mukogawa Women's University</strong> in
+        Spokane. When the group's leader returned to Japan, she entrusted the drums to member
+        <strong>Aaron Mark</strong>, with the agreement that he continue the group. We remain deeply
+        grateful to Mukogawa for this gift, which allows us to carry on teaching and performing
+        Taiko in Spokane.
       </p>
-    </section>
 
-    <section class="about-section">
-      <h2>Glossary</h2>
-      <p><strong>Bachi: </strong><span>Drumsticks</span></p>
-      <p><strong>Chu-daiko: </strong><span>Medium-size drum</span></p>
-      <p><strong>O-daiko: </strong><span>The big drum</span></p>
       <p>
-        <strong>Shime-daiko: </strong>
-        <span>Small drum with higher pitch like a snare, keeps time for the group by playing the ji</span>
+        Today, Spokane Taiko thrives with passionate members dedicated to preserving and advancing
+        the art of <strong>kumi-daiko</strong> (ensemble drumming). We welcome everyone—regardless
+        of background, identity, or experience—to join our community.
       </p>
+
       <p>
-        <strong>Ji: </strong>
-        <span
-          >Underlying pulse or beat that keeps time for the song, typically played by shime</span
-        >
-      </p>
-      <p><strong>Hachimaki: </strong><span>Headband worn for performances</span></p>
-      <p>
-        <strong>Kiai: </strong>
-        <span>
-          A shout during a song for encouragement, to signify certain transitions,
-          to add dynamics to the song, etc. Similar use in martial arts.
-        </span>
+        Through performances and workshops, we honor Taiko's ancient roots while celebrating its
+        energy as a living, evolving art form. Whether soulful and reflective or powerful and
+        electric, our music always resonates with the spirit of Taiko.
       </p>
     </section>
 
