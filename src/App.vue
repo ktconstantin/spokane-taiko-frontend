@@ -47,6 +47,7 @@ async function handleLogout() {
         <div class="nav-links" :class="{ open: mobileMenuOpen }">
           <router-link to="/" @click="closeMobileMenu"> Home </router-link>
           <router-link to="/about" @click="closeMobileMenu"> About </router-link>
+          <router-link to="/contact-us" @click="closeMobileMenu"> Contact Us </router-link>
 
           <!-- Events Dropdown -->
           <div class="events-dropdown">

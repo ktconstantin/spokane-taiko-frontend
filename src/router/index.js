@@ -8,6 +8,7 @@ import ManageEvents from '../views/admin/ManageEvents.vue'
 import PerformancesPage from '@/views/PerformancesPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
 import AboutPage from '@/views/AboutPage.vue'
+import ContactUs from '@/views/ContactUs.vue'
 import { requireAdmin, requireAuth } from '@/router/guards.js'
 
 const router = createRouter({
@@ -27,6 +28,11 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutPage,
+    },
+    {
+      path: '/contact-us',
+      name: 'contact-us',
+      component: ContactUs,
     },
     {
       path: '/login',
