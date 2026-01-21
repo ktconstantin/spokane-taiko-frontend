@@ -67,7 +67,7 @@ h1 {
 }
 
 h2 {
-  color: #42b983;
+  color: var(--color-purple);
   margin-bottom: 1rem;
 }
 
@@ -78,7 +78,7 @@ h2 {
 }
 
 .error {
-  color: #e74c3c;
+  color: var(--color-red);
 }
 
 .announcements {
@@ -87,7 +87,7 @@ h2 {
 
 .announcement-card {
   background: #f8f9fa;
-  border-left: 4px solid #42b983;
+  border-left: 4px solid var(--color-purple);
   padding: 1.5rem;
   margin-bottom: 1rem;
   border-radius: 4px;

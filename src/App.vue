@@ -194,11 +194,11 @@ body {
 }
 
 .nav-links > a:hover {
-  color: #42b983;
+  color: var(--color-purple);
 }
 
 .nav-links > a.router-link-active {
-  color: #42b983;
+  color: var(--color-purple);
 }
 
 /* Events Dropdown */
@@ -214,7 +214,7 @@ body {
 }
 
 .events-label:hover {
-  color: #42b983;
+  color: var(--color-purple);
 }
 
 .events-dropdown .dropdown-content {
@@ -248,7 +248,7 @@ body {
 }
 
 .admin-label:hover {
-  color: #42b983;
+  color: var(--color-purple);
 }
 
 .admin-dropdown .dropdown-content {
@@ -278,7 +278,7 @@ body {
 
 .dropdown-content a:hover {
   background: #f5f5f5;
-  color: #42b983;
+  color: var(--color-purple);
 }
 
 .dropdown-content a:first-child {
@@ -290,7 +290,7 @@ body {
 }
 
 .logout-btn {
-  background: #e74c3c;
+  background: var(--color-red);
   color: white;
   border: none;
   padding: 0.5rem 1rem;

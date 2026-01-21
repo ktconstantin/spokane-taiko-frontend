@@ -89,6 +89,23 @@ function resetForm() {
     <div class="contact-content">
       <!-- Left Column -->
       <div class="contact-info">
+        <!-- Phone Contact -->
+        <div class="phone-contact">
+          <svg
+            class="phone-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+            />
+          </svg>
+          <span class="phone-link"> (509) 720-8715 </span>
+        </div>
+
         <!-- Email Contact -->
         <div class="email-contact">
           <svg
@@ -198,7 +215,7 @@ function resetForm() {
 }
 
 .contact-banner {
-  background: linear-gradient(135deg, #42b983 0%, #2c7a5f 100%);
+  background: linear-gradient(135deg, var(--color-purple) 0%, #000000 100%);
   color: white;
   padding: 3rem 2rem;
   text-align: center;
@@ -240,6 +257,31 @@ function resetForm() {
   gap: 2rem;
 }
 
+/* Phone Contact - same styling as email */
+.phone-contact {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.phone-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-purple);
+  flex-shrink: 0;
+}
+
+.phone-link {
+  color: #2c3e50;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
 .email-contact {
   display: flex;
   align-items: center;
@@ -253,7 +295,7 @@ function resetForm() {
 .email-icon {
   width: 32px;
   height: 32px;
-  color: #42b983;
+  color: var(--color-purple);
   flex-shrink: 0;
 }
 
@@ -266,7 +308,7 @@ function resetForm() {
 }
 
 .email-link:hover {
-  color: #42b983;
+  color: var(--color-purple);
   text-decoration: underline;
 }
 
@@ -302,7 +344,7 @@ function resetForm() {
 
 .performance-details li::before {
   content: '•';
-  color: #42b983;
+  color: var(--color-purple);
   font-weight: bold;
   display: inline-block;
   width: 1em;
@@ -347,7 +389,7 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #42b983;
+  border-color: var(--color-purple);
 }
 
 textarea {
@@ -379,7 +421,7 @@ textarea {
 .submit-btn {
   width: 100%;
   padding: 1rem;
-  background: #42b983;
+  background: #000000;
   color: white;
   border: none;
   border-radius: 4px;
@@ -390,7 +432,7 @@ textarea {
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #359268;
+  background: var(--color-purple);
 }
 
 .submit-btn:disabled {

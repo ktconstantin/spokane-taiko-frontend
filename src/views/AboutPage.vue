@@ -59,7 +59,7 @@ h1 {
 }
 
 .about-section h2 {
-  color: #42b983;
+  color: var(--color-purple);
   margin-bottom: 1rem;
   font-size: 1.75rem;
 }

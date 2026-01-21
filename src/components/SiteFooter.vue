@@ -105,7 +105,7 @@ const contactEmail = 'spokanetaiko@live.com'
 
 <style scoped>
 .site-footer {
-  background: #2c3e50;
+  background: #000000;
   color: white;
   margin-top: 4rem;
 }
@@ -120,7 +120,7 @@ const contactEmail = 'spokanetaiko@live.com'
 }
 
 .footer-section h3 {
-  color: #42b983;
+  color: var(--color-purple);
   margin-bottom: 1rem;
   font-size: 1.1rem;
 }
@@ -131,7 +131,7 @@ const contactEmail = 'spokanetaiko@live.com'
 }
 
 .email-link {
-  color: #42b983;
+  color: var(--color-purple);
   text-decoration: none;
   font-weight: 500;
 }
@@ -173,11 +173,11 @@ const contactEmail = 'spokanetaiko@live.com'
 }
 
 .social-link.instagram:hover {
-  color: #e4405f;
+  color: var(--color-purple);
 }
 
 .social-link.youtube:hover {
-  color: #ff0000;
+  color: var(--color-red);
 }
 
 .footer-description {
