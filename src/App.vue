@@ -33,7 +33,7 @@ async function handleLogout() {
     <nav class="main-nav">
       <div class="nav-content">
         <router-link to="/" class="logo" @click="closeMobileMenu">
-          <img src="/spokane_taiko_logo.png" alt="Spokane Taiko Logo" class="logo-image" />
+          <img src="/new_logo.png" alt="Spokane Taiko Logo" class="logo-image" />
         </router-link>
 
         <!-- Hamburger Button (Mobile Only) -->
@@ -112,6 +112,9 @@ body {
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
+  min-height: 120px; /* Ensure enough height */
+  display: flex;
+  align-items: flex-end; /* Push content to bottom */
 }
 
 .nav-content {
@@ -119,14 +122,17 @@ body {
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
+  width: 100%;
   justify-content: space-between;
-  align-items: center;
   position: relative;
+  align-items: flex-end;
 }
 
 .logo {
   display: flex;
   align-items: center;
+  align-self: flex-start;
+  margin-bottom: auto;
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: bold;
@@ -136,7 +142,7 @@ body {
 }
 
 .logo-image {
-  height: 60px;
+  height: 175px;
   width: auto;
 }
 
