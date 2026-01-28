@@ -9,6 +9,7 @@ import PerformancesPage from '@/views/PerformancesPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
 import AboutPage from '@/views/AboutPage.vue'
 import ContactUs from '@/views/ContactUs.vue'
+import PhotoGallery from '@/views/PhotoGallery.vue'
 import { requireAdmin, requireAuth } from '@/router/guards.js'
 
 const router = createRouter({
@@ -33,6 +34,17 @@ const router = createRouter({
       path: '/contact-us',
       name: 'contact-us',
       component: ContactUs,
+    },
+    {
+      path: '/photo-gallery',
+      name: 'photo-gallery',
+      component: PhotoGallery,
+    },
+    {
+      path: '/admin/photos',
+      name: 'admin-photos',
+      component: () => import('../views/admin/ManagePhotos.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
     {
       path: '/login',

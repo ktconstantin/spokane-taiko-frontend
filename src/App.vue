@@ -48,6 +48,7 @@ async function handleLogout() {
           <router-link to="/" @click="closeMobileMenu"> Home </router-link>
           <router-link to="/about" @click="closeMobileMenu"> About </router-link>
           <router-link to="/contact-us" @click="closeMobileMenu"> Contact Us </router-link>
+          <router-link to="/photo-gallery" @click="closeMobileMenu"> Photo Gallery </router-link>
 
           <!-- Events Dropdown -->
           <div class="events-dropdown">
@@ -76,6 +77,7 @@ async function handleLogout() {
                 <router-link to="/admin/cancellations" @click="closeMobileMenu"
                   >Cancellations</router-link
                 >
+                <router-link to="/admin/photos" @click="closeMobileMenu"> Photos </router-link>
               </div>
             </div>
             <button @click="handleLogout" class="logout-btn">Logout</button>
