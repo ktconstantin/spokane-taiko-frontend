@@ -36,6 +36,10 @@ onMounted(async () => {
   <div class="home">
     <h1>Spokane Taiko</h1>
 
+    <div class="hero-photo">
+      <img src="/flyer_open_house_2026.png" alt="Spokane Taiko performance" class="hero-image" />
+    </div>
+
     <div v-if="loading" class="loading">Loading announcements...</div>
 
     <div v-else-if="error" class="error">{{ error }}</div>
@@ -64,6 +68,22 @@ onMounted(async () => {
 h1 {
   color: #2c3e50;
   margin-bottom: 2rem;
+}
+
+.hero-photo {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 h2 {
@@ -105,5 +125,19 @@ h2 {
 
 .announcement-card small {
   color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+  .home {
+    padding: 1rem;
+  }
+
+  .hero-photo {
+    margin-bottom: 2rem;
+  }
+
+  .hero-image {
+    max-height: 300px;
+  }
 }
 </style>
