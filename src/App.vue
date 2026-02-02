@@ -58,6 +58,9 @@ async function handleLogout() {
               <router-link v-if="isAuthenticated()" to="/performances" @click="closeMobileMenu">
                 Performances
               </router-link>
+              <router-link v-if="isAuthenticated()" to="/documents" @click="closeMobileMenu">
+                Sheet Music
+              </router-link>
             </div>
           </div>
 
@@ -78,6 +81,7 @@ async function handleLogout() {
                   >Cancellations</router-link
                 >
                 <router-link to="/admin/photos" @click="closeMobileMenu"> Photos </router-link>
+                <router-link to="/admin/documents" @click="closeMobileMenu">Documents</router-link>
               </div>
             </div>
             <button @click="handleLogout" class="logout-btn">Logout</button>

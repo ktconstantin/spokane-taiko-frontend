@@ -116,3 +116,78 @@ export const photosAPI = {
     if (error) throw error
   },
 }
+
+// Documents API
+export const documentsAPI = {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return { data }
+  },
+
+  async create(documentData) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const { data, error } = await supabase
+      .from('documents')
+      .insert([
+        {
+          ...documentData,
+          uploaded_by: user?.id,
+        },
+      ])
+      .select()
+
+    if (error) throw error
+    return { data: data[0] }
+  },
+
+  async update(id, documentData) {
+    const { error } = await supabase.from('documents').update(documentData).eq('id', id)
+
+    if (error) throw error
+  },
+
+  async delete(id) {
+    const { error } = await supabase.from('documents').delete().eq('id', id)
+
+    if (error) throw error
+  },
+
+  // Upload PDF to storage
+  async uploadDocument(file) {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+
+    const { data, error } = await supabase.storage.from('documents').upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+    if (error) throw error
+
+    // Get public URL
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('documents').getPublicUrl(fileName)
+
+    return {
+      path: data.path,
+      url: publicUrl,
+      size: file.size,
+    }
+  },
+
+  // Delete document from storage
+  async deleteDocumentFile(path) {
+    const { error } = await supabase.storage.from('documents').remove([path])
+
+    if (error) throw error
+  },
+}

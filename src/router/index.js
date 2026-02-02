@@ -81,6 +81,18 @@ const router = createRouter({
       component: ManageEvents,
       beforeEnter: requireAdmin,
     },
+    {
+      path: '/documents',
+      name: 'documents',
+      component: () => import('../views/DocumentsPage.vue'),
+      meta: { requiresAuth: true }, // Members only
+    },
+    {
+      path: '/admin/documents',
+      name: 'admin-documents',
+      component: () => import('../views/admin/ManageDocuments.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 
