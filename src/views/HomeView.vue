@@ -40,6 +40,10 @@ onMounted(async () => {
       <img src="/flyer_open_house_2026.png" alt="Spokane Taiko performance" class="hero-image" />
     </div>
 
+    <div class="hero-photo">
+      <img src="/group_photo_outside.jpeg" alt="Spokane Taiko members" class="hero-image" />
+    </div>
+
     <div v-if="loading" class="loading">Loading announcements...</div>
 
     <div v-else-if="error" class="error">{{ error }}</div>
