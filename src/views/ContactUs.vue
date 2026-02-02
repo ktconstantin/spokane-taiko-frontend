@@ -133,8 +133,12 @@ function resetForm() {
             <li>Storage for drum bags & cases while on site</li>
             <li>Change & warm up room (close to washrooms)</li>
             <li>Parking for (approx.) 3-4 vehicles while on site</li>
-            <li>Minimum stage/performance area: 30ft W x 20ft D</li>
+            <li>Minimum stage/performance area: 30' x 20' *</li>
           </ul>
+          <p class="footnote">
+            *We may be able to make adjustments if your area is smaller. Please leave notes in the
+            message section.
+          </p>
         </div>
       </div>
 
@@ -349,6 +353,15 @@ function resetForm() {
   display: inline-block;
   width: 1em;
   margin-right: 0.5rem;
+}
+
+.footnote {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-style: italic;
+  margin: 0;
+  padding-left: 0;
+  line-height: 1.4;
 }
 
 /* Right Column - Form */
