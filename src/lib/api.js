@@ -1,5 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
 
+const customStorageAdapter = {
+  getItem: (key) => {
+    return window.localStorage.getItem(key)
+  },
+  setItem: (key, value) => {
+    window.localStorage.setItem(key, value)
+  },
+  removeItem: (key) => {
+    window.localStorage.removeItem(key)
+  },
+}
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
@@ -9,6 +21,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
+    storage: customStorageAdapter,
   },
 })
 
