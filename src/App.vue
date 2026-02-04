@@ -11,6 +11,8 @@ const router = useRouter()
 const { showToast } = useToast()
 
 const mobileMenuOpen = ref(false)
+const eventsDropdownOpen = ref(false)
+const adminDropdownOpen = ref(false)
 
 function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value
@@ -18,6 +20,18 @@ function toggleMobileMenu() {
 
 function closeMobileMenu() {
   mobileMenuOpen.value = false
+  eventsDropdownOpen.value = false
+  adminDropdownOpen.value = false
+}
+
+function toggleEventsDropdown() {
+  eventsDropdownOpen.value = !eventsDropdownOpen.value
+  adminDropdownOpen.value = false // Close admin if open
+}
+
+function toggleAdminDropdown() {
+  adminDropdownOpen.value = !adminDropdownOpen.value
+  eventsDropdownOpen.value = false // Close events if open
 }
 
 async function handleLogout() {
@@ -50,9 +64,8 @@ async function handleLogout() {
           <router-link to="/contact-us" @click="closeMobileMenu"> Contact Us </router-link>
           <router-link to="/photo-gallery" @click="closeMobileMenu"> Photo Gallery </router-link>
 
-          <!-- Events Dropdown -->
-          <div class="events-dropdown">
-            <span class="events-label">Events</span>
+          <div class="events-dropdown" :class="{ 'mobile-open': eventsDropdownOpen }">
+            <span class="events-label" @click="toggleEventsDropdown">Events</span>
             <div class="dropdown-content">
               <router-link to="/events" @click="closeMobileMenu">Calendar</router-link>
               <router-link v-if="isAuthenticated()" to="/performances" @click="closeMobileMenu">
@@ -70,8 +83,12 @@ async function handleLogout() {
 
           <template v-if="user">
             <!-- Admin Dropdown -->
-            <div v-if="isAdmin()" class="admin-dropdown">
-              <span class="admin-label">Admin</span>
+            <div
+              v-if="isAdmin()"
+              class="admin-dropdown"
+              :class="{ 'mobile-open': adminDropdownOpen }"
+            >
+              <span class="admin-label" @click="toggleAdminDropdown">Admin</span>
               <div class="dropdown-content">
                 <router-link to="/admin/events" @click="closeMobileMenu">Events</router-link>
                 <router-link to="/admin/announcements" @click="closeMobileMenu"
@@ -80,7 +97,7 @@ async function handleLogout() {
                 <router-link to="/admin/cancellations" @click="closeMobileMenu"
                   >Cancellations</router-link
                 >
-                <router-link to="/admin/photos" @click="closeMobileMenu"> Photos </router-link>
+                <router-link to="/admin/photos" @click="closeMobileMenu">Photos</router-link>
                 <router-link to="/admin/documents" @click="closeMobileMenu">Documents</router-link>
               </div>
             </div>
@@ -364,6 +381,7 @@ body {
     display: block;
     width: 100%;
     padding: 0.5rem 0;
+    cursor: pointer;
   }
 
   .events-dropdown .dropdown-content,
@@ -376,11 +394,25 @@ body {
     padding-left: 1rem;
   }
 
+  @media (min-width: 769px) {
+    .events-dropdown:hover .dropdown-content,
+    .admin-dropdown:hover .dropdown-content {
+      display: block;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .events-dropdown.mobile-open .dropdown-content,
+    .admin-dropdown.mobile-open .dropdown-content {
+      display: block;
+    }
+  }
+
   /* Show dropdowns on click in mobile */
-  .events-dropdown:hover .dropdown-content,
+  /* .events-dropdown:hover .dropdown-content,
   .admin-dropdown:hover .dropdown-content {
     display: block;
-  }
+  } */
 
   .dropdown-content a {
     padding: 0.5rem 0;
