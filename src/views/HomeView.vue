@@ -9,6 +9,7 @@ const { loading: authLoading } = useAuth()
 const announcements = ref([])
 const loading = ref(true)
 const error = ref(null)
+const videoId = ref('wHDxPHs3GhA')
 
 async function loadAnnouncements() {
   try {
@@ -38,6 +39,23 @@ onMounted(async () => {
 
     <div class="hero-photo">
       <img src="/group_photo_outside.jpeg" alt="Spokane Taiko members" class="hero-image" />
+    </div>
+
+    <div class="hero-video">
+      <iframe
+        :src="`https://www.youtube.com/embed/${videoId}`"
+        title="Spokane Taiko"
+        frameborder="0"
+        allow="
+          accelerometer;
+          autoplay;
+          clipboard-write;
+          encrypted-media;
+          gyroscope;
+          picture-in-picture;
+        "
+        allowfullscreen
+      />
     </div>
 
     <div v-if="loading" class="loading">Loading announcements...</div>
@@ -125,6 +143,22 @@ h2 {
 
 .announcement-card small {
   color: #7f8c8d;
+}
+
+.hero-video {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 16 / 9;
+}
+
+.hero-video iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 @media (max-width: 768px) {
