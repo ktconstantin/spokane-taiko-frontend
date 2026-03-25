@@ -1,19 +1,36 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { supabase } from '@/lib/api'
+import { computed, onMounted, ref } from 'vue'
+import { duesAPI, supabase } from '@/lib/api'
 import { useAuth } from '@/composables/useAuth'
 import { useToast } from '@/composables/useToast'
+import {
+  DUES_MONTHLY_AMOUNT,
+  DUES_START_MONTH,
+  formatMonthLabel,
+  getNextDueMonth,
+  normalizeMonthKey,
+  sortMonthKeys,
+} from '@/lib/dues'
 
 const { user } = useAuth()
 const { showToast } = useToast()
 
 const fullName = ref('')
 const loading = ref(false)
+const duesLoading = ref(false)
+const isDuesMember = ref(false)
+const paidMonthKeys = ref([])
 
 // Password change fields
 const newPassword = ref('')
 const confirmPassword = ref('')
 const passwordLoading = ref(false)
+
+const sortedPaidMonths = computed(() => sortMonthKeys(paidMonthKeys.value))
+const nextDueMonth = computed(() => {
+  if (!isDuesMember.value) return null
+  return getNextDueMonth(paidMonthKeys.value, DUES_START_MONTH)
+})
 
 async function loadProfile() {
   if (!user.value) return
@@ -22,6 +39,25 @@ async function loadProfile() {
 
   if (data) {
     fullName.value = data.full_name || ''
+    isDuesMember.value = !!data.is_dues_member
+  }
+}
+
+async function loadDues() {
+  if (!user.value) return
+
+  duesLoading.value = true
+
+  try {
+    const { data } = await duesAPI.getPaymentsForMember(user.value.id)
+    paidMonthKeys.value = (data || [])
+      .map((payment) => normalizeMonthKey(payment.dues_month))
+      .filter(Boolean)
+  } catch (error) {
+    console.error('Error loading dues:', error)
+    showToast('Failed to load dues history', 'error')
+  } finally {
+    duesLoading.value = false
   }
 }
 
@@ -48,7 +84,6 @@ async function updateProfile() {
 }
 
 async function changePassword() {
-  // Validation
   if (!newPassword.value || !confirmPassword.value) {
     showToast('Please fill in all password fields', 'error')
     return
@@ -67,7 +102,6 @@ async function changePassword() {
   passwordLoading.value = true
 
   try {
-    // Create timeout that resolves as success after 3 seconds
     const timeoutPromise = new Promise((resolve) =>
       setTimeout(() => resolve({ success: true, timedOut: true }), 3000),
     )
@@ -80,15 +114,12 @@ async function changePassword() {
 
     const result = await Promise.race([updatePromise, timeoutPromise])
 
-    // Check for actual error (not timeout)
     if (!result.timedOut && result.error) {
       throw result.error
     }
 
-    // If we got here, either it succeeded or timed out (which means 200 was sent)
     showToast('Password changed successfully!', 'success')
 
-    // Reset form
     newPassword.value = ''
     confirmPassword.value = ''
   } catch (error) {
@@ -99,7 +130,13 @@ async function changePassword() {
   }
 }
 
-onMounted(loadProfile)
+onMounted(async () => {
+  await loadProfile()
+
+  if (isDuesMember.value) {
+    await loadDues()
+  }
+})
 </script>
 
 <template>
@@ -125,6 +162,35 @@ onMounted(loadProfile)
       <button @click="updateProfile" :disabled="loading" class="btn-update">
         {{ loading ? 'Saving...' : 'Update Profile' }}
       </button>
+    </div>
+
+    <div v-if="isDuesMember" class="profile-card dues-section">
+      <h2>Membership Dues</h2>
+      <p class="dues-copy">
+        Monthly dues are ${{ DUES_MONTHLY_AMOUNT }}. Tracking begins with
+        {{ formatMonthLabel(DUES_START_MONTH) }}.
+      </p>
+
+      <div v-if="duesLoading" class="dues-loading">Loading dues history...</div>
+
+      <template v-else>
+        <div class="dues-status-card">
+          <span class="status-label">Next month due</span>
+          <strong class="status-value">
+            {{ nextDueMonth ? formatMonthLabel(nextDueMonth) : 'Fully paid in tracked range' }}
+          </strong>
+        </div>
+
+        <div class="paid-months-section">
+          <h3>Paid Months</h3>
+          <div v-if="sortedPaidMonths.length > 0" class="paid-months-list">
+            <span v-for="monthKey in sortedPaidMonths" :key="monthKey" class="paid-month-pill">
+              {{ formatMonthLabel(monthKey) }}
+            </span>
+          </div>
+          <p v-else class="no-dues-history">No paid months recorded yet.</p>
+        </div>
+      </template>
     </div>
 
     <!-- Change Password Section -->
@@ -257,6 +323,62 @@ button:disabled {
   background: #95a5a6;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.dues-section {
+  border-left: 4px solid var(--color-purple);
+}
+
+.dues-copy {
+  color: #5f6c7b;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.dues-loading,
+.no-dues-history {
+  color: #7f8c8d;
+}
+
+.dues-status-card {
+  background: #f8f4fd;
+  border: 1px solid #e3d2f2;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.status-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #6c587a;
+  margin-bottom: 0.35rem;
+}
+
+.status-value {
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.paid-months-section h3 {
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+}
+
+.paid-months-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.paid-month-pill {
+  background: #eef8f1;
+  border: 1px solid #bfe1c9;
+  color: #20613c;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .password-section {

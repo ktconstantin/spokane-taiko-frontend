@@ -91,6 +91,7 @@ async function handleLogout() {
               <span class="admin-label" @click="toggleAdminDropdown">Admin</span>
               <div class="dropdown-content">
                 <router-link to="/admin/events" @click="closeMobileMenu">Events</router-link>
+                <router-link to="/admin/dues" @click="closeMobileMenu">Dues</router-link>
                 <router-link to="/admin/announcements" @click="closeMobileMenu"
                   >Announcements</router-link
                 >

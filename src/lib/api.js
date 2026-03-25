@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { monthKeyToStorageValue, normalizeMonthKey } from '@/lib/dues'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -194,6 +195,76 @@ export const documentsAPI = {
   // Delete document from storage
   async deleteDocumentFile(path) {
     const { error } = await supabase.storage.from('documents').remove([path])
+
+    if (error) throw error
+  },
+}
+
+export const duesAPI = {
+  async getDuesMembers() {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, role, is_dues_member')
+      .eq('is_dues_member', true)
+      .order('full_name', { ascending: true })
+
+    if (error) throw error
+    return { data }
+  },
+
+  async getAllPayments() {
+    const { data, error } = await supabase
+      .from('member_dues_payments')
+      .select('id, member_id, dues_month, created_at, updated_at, updated_by')
+      .order('dues_month', { ascending: true })
+
+    if (error) throw error
+    return { data }
+  },
+
+  async getPaymentsForMember(memberId) {
+    const { data, error } = await supabase
+      .from('member_dues_payments')
+      .select('id, member_id, dues_month, created_at, updated_at, updated_by')
+      .eq('member_id', memberId)
+      .order('dues_month', { ascending: true })
+
+    if (error) throw error
+    return { data }
+  },
+
+  async markMonthsPaid(memberId, monthKeys) {
+    const normalizedMonths = [...new Set(monthKeys.map(normalizeMonthKey).filter(Boolean))]
+
+    if (normalizedMonths.length === 0) return
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const rows = normalizedMonths.map((monthKey) => ({
+      member_id: memberId,
+      dues_month: monthKeyToStorageValue(monthKey),
+      updated_by: user?.id || null,
+    }))
+
+    const { error } = await supabase
+      .from('member_dues_payments')
+      .upsert(rows, { onConflict: 'member_id,dues_month' })
+
+    if (error) throw error
+  },
+
+  async removeMonthPayment(memberId, monthKey) {
+    const normalizedMonth = normalizeMonthKey(monthKey)
+
+    if (!normalizedMonth) return
+
+    const { error } = await supabase
+      .from('member_dues_payments')
+      .delete()
+      .eq('member_id', memberId)
+      .eq('dues_month', monthKeyToStorageValue(normalizedMonth))
 
     if (error) throw error
   },

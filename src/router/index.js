@@ -4,6 +4,7 @@ import EventsCalendar from '@/views/EventsCalendar.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import ManageAnnouncements from '@/views/admin/ManageAnnouncements.vue'
 import ManageCancellations from '@/views/admin/ManageCancellations.vue'
+import ManageDues from '@/views/admin/ManageDues.vue'
 import ManageEvents from '../views/admin/ManageEvents.vue'
 import PerformancesPage from '@/views/PerformancesPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
@@ -62,6 +63,12 @@ const router = createRouter({
       name: 'profile',
       component: ProfilePage,
       beforeEnter: requireAuth,
+    },
+    {
+      path: '/admin/dues',
+      name: 'manage-dues',
+      component: ManageDues,
+      beforeEnter: requireAdmin,
     },
     {
       path: '/admin/announcements',
