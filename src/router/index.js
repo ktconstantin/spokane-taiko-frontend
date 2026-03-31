@@ -92,7 +92,6 @@ const router = createRouter({
       path: '/documents',
       name: 'documents',
       component: () => import('../views/DocumentsPage.vue'),
-      meta: { requiresAuth: true }, // Members only
     },
     {
       path: '/admin/documents',
