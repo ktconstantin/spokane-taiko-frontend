@@ -1,9 +1,11 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { documentsAPI } from '@/lib/api'
+import { useAuth } from '@/composables/useAuth'
 import { useToast } from '@/composables/useToast'
 
 const { showToast } = useToast()
+const { isAuthenticated, loading: authLoading } = useAuth()
 
 const FOLDERS = [
   { value: 'sheet_music', label: 'Sheet Music' },
@@ -23,12 +25,16 @@ const isEditing = computed(() => !!editingId.value)
 const selectedFileName = computed(() => formData.value.file?.name || '')
 
 async function loadDocuments() {
+  loading.value = true
+
   try {
     const { data } = await documentsAPI.getAll()
     documents.value = data || []
   } catch (error) {
     console.error('Error loading documents:', error)
     showToast('Failed to load documents', 'error')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -256,7 +262,14 @@ function formatFileSize(bytes) {
   return `${mb.toFixed(2)} MB`
 }
 
-onMounted(loadDocuments)
+watch(
+  () => authLoading.value,
+  async (isLoading) => {
+    if (isLoading || !isAuthenticated()) return
+    await loadDocuments()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -343,11 +356,13 @@ onMounted(loadDocuments)
     <section class="documents-list">
       <h2>All Library Items ({{ documents.length }})</h2>
 
-      <div v-if="documents.length === 0" class="empty-state">
+      <div v-if="loading || authLoading" class="empty-state">Loading documents...</div>
+
+      <div v-else-if="documents.length === 0" class="empty-state">
         No documents yet. Create your first one above!
       </div>
 
-      <article v-for="doc in documents" :key="doc.id" class="document-row">
+      <article v-for="doc in documents" v-else :key="doc.id" class="document-row">
         <div class="document-copy">
           <div class="document-meta">
             <span class="pill folder">{{ formatFolder(doc.folder) }}</span>
