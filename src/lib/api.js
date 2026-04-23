@@ -43,6 +43,14 @@ export const eventsAPI = {
     return { data }
   },
 
+  async getCalendarEvents({ authenticated = false } = {}) {
+    const source = authenticated ? 'events' : 'public_events'
+    const { data, error } = await supabase.from(source).select('*')
+
+    if (error) throw error
+    return { data }
+  },
+
   async create(eventData) {
     const { error } = await supabase.from('events').insert([eventData])
 

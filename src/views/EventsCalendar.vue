@@ -1,15 +1,17 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { supabase } from '@/lib/api'
+import { ref, computed, watch } from 'vue'
+import { eventsAPI } from '@/lib/api'
+import { useAuth } from '@/composables/useAuth'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
 
+const { user, loading } = useAuth()
 const events = ref([])
 const selectedEvent = ref(null)
 const showEventModal = ref(false)
 
 async function loadEvents() {
-  const { data } = await supabase.from('events').select('*')
+  const { data } = await eventsAPI.getCalendarEvents({ authenticated: !!user.value })
   if (data) events.value = data
 }
 
@@ -103,7 +105,14 @@ function formatTime(date) {
   })
 }
 
-onMounted(loadEvents)
+watch(
+  [loading, () => user.value?.id || null],
+  async ([isLoading]) => {
+    if (isLoading) return
+    await loadEvents()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -134,8 +143,8 @@ onMounted(loadEvents)
           <div class="event-location" v-if="event.location && view !== 'month'">
             📍 {{ event.location }}
           </div>
-          <div class="event-description" v-if="event.description && view !== 'month'">
-            {{ event.description }}
+          <div class="event-description" v-if="event.content && view !== 'month'">
+            {{ event.content }}
           </div>
         </div>
       </template>
