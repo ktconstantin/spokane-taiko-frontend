@@ -21,6 +21,22 @@ const formData = ref({
   end_time: '',
 })
 
+function normalizeDateInputValue(value) {
+  if (!value) return ''
+  if (typeof value === 'string') {
+    const match = value.match(/^(\d{4}-\d{2}-\d{2})/)
+    if (match) return match[1]
+  }
+
+  const parsedDate = new Date(value)
+  if (Number.isNaN(parsedDate.getTime())) return ''
+
+  const year = parsedDate.getUTCFullYear()
+  const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(parsedDate.getUTCDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 async function loadEvents() {
   const { data } = await eventsAPI.getAll()
   events.value = data
@@ -83,7 +99,7 @@ function editEvent(event) {
     event_type: event.event_type,
     location: event.location || '',
     is_recurring: event.is_recurring,
-    event_date: event.event_date || '',
+    event_date: normalizeDateInputValue(event.event_date),
     start_time: event.start_time || '',
     end_time: event.end_time || '',
   }
@@ -107,7 +123,7 @@ function resetForm() {
   formData.value = {
     title: '',
     description: '',
-    event_type: 'practice',
+    event_type: 'performance',
     location: '',
     is_recurring: false,
     event_date: '',
