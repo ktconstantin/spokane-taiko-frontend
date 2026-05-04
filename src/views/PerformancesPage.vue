@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/lib/api'
+import { formatDateOnly } from '@/lib/date'
 import { useAuth } from '@/composables/useAuth'
 
 const { user } = useAuth()
@@ -152,13 +153,13 @@ onMounted(loadData)
     <div v-else class="events-list">
       <div v-for="event in events" :key="event.id" class="event-card">
         <div class="event-header">
-          <h2>{{ event.title }}</h2>
-          <span class="event-date">
-            {{
-              new Date(event.event_date).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
+            <h2>{{ event.title }}</h2>
+            <span class="event-date">
+              {{
+                formatDateOnly(event.event_date, 'en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
                 day: 'numeric',
               })
             }}

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { eventsAPI } from '@/lib/api'
+import { parseDateOnlyAsLocalDate } from '@/lib/date'
 import { useAuth } from '@/composables/useAuth'
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
@@ -58,7 +59,7 @@ const calendarEvents = computed(() => {
       }
     } else {
       // One-time performance events
-      const eventDate = new Date(event.event_date)
+      const eventDate = parseDateOnlyAsLocalDate(event.event_date) || new Date(event.event_date)
       const year = eventDate.getFullYear()
       const month = eventDate.getMonth()
       const day = eventDate.getDate()

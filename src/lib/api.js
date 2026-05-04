@@ -63,6 +63,51 @@ export const eventsAPI = {
     if (error) throw error
   },
 
+  async cancelRecurringOccurrence(seriesId, date) {
+    const { data, error } = await supabase.from('events').select('*').eq('id', seriesId).single()
+
+    if (error) throw error
+    if (!data?.is_recurring) {
+      throw new Error('Only recurring events can have individual occurrences cancelled.')
+    }
+
+    const currentCancelled = Array.isArray(data.cancelled_dates) ? data.cancelled_dates : []
+    if (currentCancelled.includes(date)) {
+      return { data, alreadyCancelled: true }
+    }
+
+    const updatedCancelled = [...currentCancelled, date]
+    const { error: updateError } = await supabase
+      .from('events')
+      .update({ cancelled_dates: updatedCancelled })
+      .eq('id', seriesId)
+
+    if (updateError) throw updateError
+    return { data: { ...data, cancelled_dates: updatedCancelled }, alreadyCancelled: false }
+  },
+
+  async createReplacementFromRecurring(seriesEvent, replacementDate) {
+    if (!seriesEvent?.is_recurring) {
+      throw new Error('Replacement events can only be created from recurring events.')
+    }
+
+    const replacementEvent = {
+      title: seriesEvent.title,
+      description: seriesEvent.description || '',
+      event_type: seriesEvent.event_type,
+      location: seriesEvent.location || '',
+      is_recurring: false,
+      event_date: replacementDate,
+      start_time: seriesEvent.recurring_start_time,
+      end_time: seriesEvent.recurring_end_time || null,
+    }
+
+    const { data, error } = await supabase.from('events').insert([replacementEvent]).select().single()
+
+    if (error) throw error
+    return { data }
+  },
+
   async delete(id) {
     const { error } = await supabase.from('events').delete().eq('id', id)
 

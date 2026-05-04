@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 // import { supabase } from '@/lib/api'
 import { eventsAPI } from '@/lib/api'
+import { formatDateOnly } from '@/lib/date'
 import { useToast } from '@/composables/useToast'
 
 const { showToast } = useToast()
@@ -92,6 +93,15 @@ async function saveEvent() {
 }
 
 function editEvent(event) {
+  if (event.is_recurring) {
+    showToast(
+      'Recurring practices cannot be edited here. Use the cancellations page to cancel or move one occurrence.',
+      'error',
+      5000
+    )
+    return
+  }
+
   editingId.value = event.id
   formData.value = {
     title: event.title,
@@ -227,9 +237,21 @@ onMounted(loadEvents)
             <span :class="['event-type-badge', event.event_type]">
               {{ event.event_type }}
             </span>
+            <span v-if="event.is_recurring" class="recurring-badge">Recurring series</span>
           </div>
           <div class="event-actions">
-            <button @click="editEvent(event)" class="btn-edit">Edit</button>
+            <button
+              @click="editEvent(event)"
+              class="btn-edit"
+              :disabled="event.is_recurring"
+              :title="
+                event.is_recurring
+                  ? 'Recurring practices cannot be edited here. Use Manage Cancellations for single-occurrence changes.'
+                  : 'Edit event'
+              "
+            >
+              Edit
+            </button>
             <button @click="deleteEvent(event.id)" class="btn-delete">Delete</button>
           </div>
         </div>
@@ -239,7 +261,7 @@ onMounted(loadEvents)
 
           <!-- One-time event info -->
           <div v-if="!event.is_recurring">
-            <p><strong>Date:</strong> {{ new Date(event.event_date).toLocaleDateString() }}</p>
+            <p><strong>Date:</strong> {{ formatDateOnly(event.event_date) }}</p>
             <p>
               <strong>Time:</strong> {{ event.start_time
               }}{{ event.end_time ? ' - ' + event.end_time : '' }}
@@ -500,6 +522,11 @@ button {
 
 .btn-edit:hover {
   background: #2980b9;
+}
+
+.btn-edit:disabled {
+  background: #9fb3c8;
+  cursor: not-allowed;
 }
 
 .btn-delete {
