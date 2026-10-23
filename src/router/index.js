@@ -11,7 +11,7 @@ import ProfilePage from '@/views/ProfilePage.vue'
 import AboutPage from '@/views/AboutPage.vue'
 import ContactUs from '@/views/ContactUs.vue'
 import PhotoGallery from '@/views/PhotoGallery.vue'
-import { requireAdmin, requireAuth } from '@/router/guards.js'
+import { requireAdmin, requireAuth, requireMemberManager } from '@/router/guards.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,7 +45,7 @@ const router = createRouter({
       path: '/admin/photos',
       name: 'admin-photos',
       component: () => import('../views/admin/ManagePhotos.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true },
+      beforeEnter: requireAdmin,
     },
     {
       path: '/login',
@@ -97,7 +97,13 @@ const router = createRouter({
       path: '/admin/documents',
       name: 'admin-documents',
       component: () => import('../views/admin/ManageDocuments.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true },
+      beforeEnter: requireAdmin,
+    },
+    {
+      path: '/admin/members',
+      name: 'manage-members',
+      component: () => import('../views/admin/ManageMembers.vue'),
+      beforeEnter: requireMemberManager,
     },
   ],
 })

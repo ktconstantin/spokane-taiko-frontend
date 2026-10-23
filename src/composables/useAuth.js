@@ -59,6 +59,9 @@ export function useAuth() {
 
   const isAdmin = () => profile.value?.role === 'admin'
 
+  // Admins can always add members; anyone else needs the can_add_members flag.
+  const canAddMembers = () => isAdmin() || profile.value?.can_add_members === true
+
   return {
     user,
     profile,
@@ -67,5 +70,6 @@ export function useAuth() {
     signOut,
     isAuthenticated,
     isAdmin,
+    canAddMembers,
   }
 }

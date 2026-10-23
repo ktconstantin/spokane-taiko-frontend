@@ -322,3 +322,42 @@ export const duesAPI = {
     if (error) throw error
   },
 }
+
+export const membersAPI = {
+  async getAll() {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, role, is_dues_member, can_add_members, created_at')
+      .order('full_name', { ascending: true })
+
+    if (error) throw error
+    return { data }
+  },
+
+  // Creates the account through the add-member Edge Function, which checks the
+  // caller's permission server-side (creating users needs the service role key).
+  async add({ email, fullName, password, isDuesMember }) {
+    const { data, error } = await supabase.functions.invoke('add-member', {
+      body: {
+        email,
+        full_name: fullName,
+        password,
+        is_dues_member: isDuesMember,
+      },
+    })
+
+    if (error) {
+      // Non-2xx responses carry a friendly { error } message in the body
+      let message = error.message
+      try {
+        const body = await error.context?.json()
+        if (body?.error) message = body.error
+      } catch {
+        // keep the default message
+      }
+      throw new Error(message)
+    }
+
+    return { data: data.member }
+  },
+}

@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/useToast'
 import CustomToast from '@/components/CustomToast.vue'
 
-const { user, isAdmin, signOut, isAuthenticated } = useAuth()
+const { user, isAdmin, canAddMembers, signOut, isAuthenticated } = useAuth()
 const router = useRouter()
 const { showToast } = useToast()
 
@@ -81,24 +81,29 @@ async function handleLogout() {
           </router-link>
 
           <template v-if="user">
-            <!-- Admin Dropdown -->
+            <!-- Admin Dropdown (admins, plus anyone allowed to add members) -->
             <div
-              v-if="isAdmin()"
+              v-if="canAddMembers()"
               class="admin-dropdown"
               :class="{ 'mobile-open': adminDropdownOpen }"
             >
               <span class="admin-label" @click="toggleAdminDropdown">Admin</span>
               <div class="dropdown-content">
-                <router-link to="/admin/events" @click="closeMobileMenu">Events</router-link>
-                <router-link to="/admin/dues" @click="closeMobileMenu">Dues</router-link>
-                <router-link to="/admin/announcements" @click="closeMobileMenu"
-                  >Announcements</router-link
-                >
-                <router-link to="/admin/cancellations" @click="closeMobileMenu"
-                  >Cancellations</router-link
-                >
-                <router-link to="/admin/photos" @click="closeMobileMenu">Photos</router-link>
-                <router-link to="/admin/documents" @click="closeMobileMenu">Documents</router-link>
+                <router-link to="/admin/members" @click="closeMobileMenu">Members</router-link>
+                <template v-if="isAdmin()">
+                  <router-link to="/admin/events" @click="closeMobileMenu">Events</router-link>
+                  <router-link to="/admin/dues" @click="closeMobileMenu">Dues</router-link>
+                  <router-link to="/admin/announcements" @click="closeMobileMenu"
+                    >Announcements</router-link
+                  >
+                  <router-link to="/admin/cancellations" @click="closeMobileMenu"
+                    >Cancellations</router-link
+                  >
+                  <router-link to="/admin/photos" @click="closeMobileMenu">Photos</router-link>
+                  <router-link to="/admin/documents" @click="closeMobileMenu"
+                    >Documents</router-link
+                  >
+                </template>
               </div>
             </div>
             <button @click="handleLogout" class="logout-btn">Logout</button>

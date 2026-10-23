@@ -17,7 +17,12 @@ export async function requireAuth(to, from, next) {
   }
 }
 
-export async function requireAdmin(to, from, next) {
+const isAdminProfile = (profile) => profile?.role === 'admin'
+const canAddMembersProfile = (profile) =>
+  isAdminProfile(profile) || profile?.can_add_members === true
+
+// Signed-in users whose profile passes `isAllowed` may continue; others go home.
+async function requireProfile(to, from, next, isAllowed) {
   const {
     data: { session },
   } = await supabase.auth.getSession()
@@ -32,23 +37,30 @@ export async function requireAdmin(to, from, next) {
     return
   }
 
-  // Check if user is admin
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, can_add_members')
     .eq('id', session.user.id)
     .single()
 
-  if (profile?.role === 'admin') {
+  if (isAllowed(profile)) {
     next()
   } else {
-    // Not an admin, redirect to home (only if not already there)
+    // Not allowed, redirect to home (only if not already there)
     if (from.name !== 'home') {
-      console.warn('Non-admin user attempted to access admin page:', to.path)
+      console.warn('User without permission attempted to access admin page:', to.path)
       next({ name: 'home' })
     } else {
       // Already on home, just stay there
       next(false)
     }
   }
+}
+
+export function requireAdmin(to, from, next) {
+  return requireProfile(to, from, next, isAdminProfile)
+}
+
+export function requireMemberManager(to, from, next) {
+  return requireProfile(to, from, next, canAddMembersProfile)
 }
