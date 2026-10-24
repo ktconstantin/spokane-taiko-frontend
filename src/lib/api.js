@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { monthKeyToStorageValue, normalizeMonthKey } from '@/lib/dues'
+import { resizeImageFromUrl } from '@/lib/images'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -360,4 +361,87 @@ export const membersAPI = {
 
     return { data: data.member }
   },
+}
+
+// Site-wide settings (single row, id = 1). Anyone can read; only admins can update.
+export const siteSettingsAPI = {
+  async get() {
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('homepage_photo_url, homepage_photo_path, homepage_photo_alt, homepage_source_photo_id')
+      .eq('id', 1)
+      .maybeSingle()
+
+    if (error) throw error
+    return { data }
+  },
+
+  // Saves a resized copy of a gallery photo under photos/homepage/ and makes it the
+  // homepage photo. The copy means deleting the gallery photo won't break the homepage.
+  async setHomepagePhoto(photo) {
+    const { data: current } = await this.get()
+    const image = await resizeImageFromUrl(photo.url)
+    const extension = image.type === 'image/jpeg' ? 'jpg' : photo.url.split('.').pop()
+    const path = `homepage/${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage.from('photos').upload(path, image, {
+      cacheControl: '31536000',
+      contentType: image.type,
+      upsert: false,
+    })
+    if (uploadError) throw uploadError
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('photos').getPublicUrl(path)
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const { error } = await supabase
+      .from('site_settings')
+      .update({
+        homepage_photo_url: publicUrl,
+        homepage_photo_path: path,
+        homepage_photo_alt: photo.caption || null,
+        homepage_source_photo_id: photo.id,
+        updated_by: user?.id ?? null,
+      })
+      .eq('id', 1)
+
+    if (error) {
+      await supabase.storage.from('photos').remove([path])
+      throw error
+    }
+
+    await removeOldHomepageCopy(current?.homepage_photo_path)
+  },
+
+  async resetHomepagePhoto() {
+    const { data: current } = await this.get()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const { error } = await supabase
+      .from('site_settings')
+      .update({
+        homepage_photo_url: null,
+        homepage_photo_path: null,
+        homepage_photo_alt: null,
+        homepage_source_photo_id: null,
+        updated_by: user?.id ?? null,
+      })
+      .eq('id', 1)
+
+    if (error) throw error
+    await removeOldHomepageCopy(current?.homepage_photo_path)
+  },
+}
+
+async function removeOldHomepageCopy(path) {
+  if (!path) return
+  // Best effort: a leftover file is harmless, so don't fail the save over it
+  const { error } = await supabase.storage.from('photos').remove([path])
+  if (error) console.warn('Could not remove old homepage photo copy:', error)
 }

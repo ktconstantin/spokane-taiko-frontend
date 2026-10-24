@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { photosAPI } from '@/lib/api'
+import { photosAPI, siteSettingsAPI } from '@/lib/api'
 import { useToast } from '@/composables/useToast'
 import { supabase } from '@/lib/api'
 
@@ -21,6 +21,10 @@ const categories = ['performance', 'practice', 'workshop', 'community']
 const fileInput = ref(null)
 const previewUrl = ref(null)
 
+const DEFAULT_HOMEPAGE_PHOTO = '/group_photo_outside.jpeg'
+const homepageSettings = ref(null)
+const homepageBusyId = ref(null) // photo id being set, or 'reset'
+
 async function loadPhotos() {
   try {
     const { data } = await photosAPI.getAll()
@@ -28,6 +32,54 @@ async function loadPhotos() {
   } catch (error) {
     console.error('Error loading photos:', error)
     showToast('Failed to load photos', 'error')
+  }
+}
+
+async function loadHomepageSettings() {
+  try {
+    const { data } = await siteSettingsAPI.get()
+    homepageSettings.value = data
+  } catch (error) {
+    console.error('Error loading homepage settings:', error)
+  }
+}
+
+function isHomepagePhoto(photo) {
+  return (
+    !!homepageSettings.value?.homepage_photo_url &&
+    homepageSettings.value?.homepage_source_photo_id === photo.id
+  )
+}
+
+async function setAsHomepage(photo) {
+  homepageBusyId.value = photo.id
+
+  try {
+    await siteSettingsAPI.setHomepagePhoto(photo)
+    await loadHomepageSettings()
+    showToast('Homepage photo updated!', 'success')
+  } catch (error) {
+    console.error('Error setting homepage photo:', error)
+    showToast(`Failed to set homepage photo: ${error.message}`, 'error')
+  } finally {
+    homepageBusyId.value = null
+  }
+}
+
+async function resetHomepage() {
+  if (!confirm('Switch the homepage back to the default photo?')) return
+
+  homepageBusyId.value = 'reset'
+
+  try {
+    await siteSettingsAPI.resetHomepagePhoto()
+    await loadHomepageSettings()
+    showToast('Homepage photo reset to default', 'success')
+  } catch (error) {
+    console.error('Error resetting homepage photo:', error)
+    showToast('Failed to reset homepage photo', 'error')
+  } finally {
+    homepageBusyId.value = null
   }
 }
 
@@ -136,7 +188,10 @@ function resetForm() {
   }
 }
 
-onMounted(loadPhotos)
+onMounted(() => {
+  loadPhotos()
+  loadHomepageSettings()
+})
 </script>
 
 <template>
@@ -194,6 +249,34 @@ onMounted(loadPhotos)
       </div>
     </div>
 
+    <!-- Current homepage photo -->
+    <div class="homepage-panel">
+      <img
+        :src="homepageSettings?.homepage_photo_url || DEFAULT_HOMEPAGE_PHOTO"
+        :alt="homepageSettings?.homepage_photo_alt || 'Default homepage photo'"
+        class="homepage-thumb"
+      />
+      <div class="homepage-details">
+        <h2>Homepage Photo</h2>
+        <p v-if="homepageSettings?.homepage_photo_url">
+          Showing <strong>{{ homepageSettings.homepage_photo_alt || 'a gallery photo' }}</strong
+          >.
+        </p>
+        <p v-else>Showing the default group photo.</p>
+        <p class="homepage-hint">
+          Use the "Use as homepage photo" button on any photo below to change it.
+        </p>
+        <button
+          v-if="homepageSettings?.homepage_photo_url"
+          @click="resetHomepage"
+          class="btn-reset"
+          :disabled="homepageBusyId !== null"
+        >
+          {{ homepageBusyId === 'reset' ? 'Resetting...' : 'Reset to default' }}
+        </button>
+      </div>
+    </div>
+
     <!-- Photos Grid -->
     <div class="photos-list">
       <h2>All Photos ({{ photos.length }})</h2>
@@ -204,7 +287,16 @@ onMounted(loadPhotos)
           <div class="photo-info">
             <p class="photo-caption">{{ photo.caption }}</p>
             <span class="photo-category">{{ photo.category }}</span>
+            <span v-if="isHomepagePhoto(photo)" class="homepage-badge">On homepage</span>
           </div>
+          <button
+            v-if="!isHomepagePhoto(photo)"
+            @click="setAsHomepage(photo)"
+            class="homepage-btn"
+            :disabled="homepageBusyId !== null"
+          >
+            {{ homepageBusyId === photo.id ? 'Setting...' : 'Use as homepage photo' }}
+          </button>
           <button @click="deletePhoto(photo)" class="delete-btn" :disabled="loading">Delete</button>
         </div>
       </div>
@@ -311,6 +403,94 @@ h1 {
   cursor: not-allowed;
 }
 
+/* Homepage photo */
+.homepage-panel {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+}
+
+.homepage-thumb {
+  width: 240px;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.homepage-details h2 {
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.homepage-details p {
+  margin: 0 0 0.5rem 0;
+}
+
+.homepage-hint {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+}
+
+.btn-reset {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  color: var(--color-purple);
+  border: 1px solid var(--color-purple);
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-reset:hover:not(:disabled) {
+  background: var(--color-purple);
+  color: white;
+}
+
+.btn-reset:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.homepage-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: #42b983;
+  color: white;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.homepage-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  color: var(--color-purple);
+  border: none;
+  border-top: 1px solid #eee;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.homepage-btn:hover:not(:disabled) {
+  background: #f5eefc;
+}
+
+.homepage-btn:disabled {
+  color: #95a5a6;
+  cursor: not-allowed;
+}
+
 /* Photos Grid */
 .photos-list h2 {
   color: var(--color-text);
@@ -401,6 +581,15 @@ h1 {
 
   .photos-grid {
     grid-template-columns: 1fr;
+  }
+
+  .homepage-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .homepage-thumb {
+    width: 100%;
   }
 }
 </style>

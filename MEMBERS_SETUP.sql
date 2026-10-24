@@ -16,3 +16,14 @@ on public.profiles
 to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
+
+-- Profiles (names, emails, roles, dues status) are only readable when signed in.
+-- Previously "Anyone can view profiles" let logged-out visitors read every row.
+alter policy "Anyone can view profiles"
+on public.profiles
+to authenticated
+using (true);
+
+alter policy "Anyone can view profiles"
+on public.profiles
+rename to "Signed-in users can view profiles";

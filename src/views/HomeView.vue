@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { announcementsAPI } from '@/lib/api'
+import { announcementsAPI, siteSettingsAPI } from '@/lib/api'
 import SiteFooter from '@/components/SiteFooter.vue'
 import { useAuth } from '@/composables/useAuth'
 
@@ -10,6 +10,32 @@ const announcements = ref([])
 const loading = ref(true)
 const error = ref(null)
 const videoId = ref('wHDxPHs3GhA')
+
+// Homepage photo: admins can pick one in Admin -> Photos; otherwise use the default
+const DEFAULT_HERO_PHOTO = '/group_photo_outside.jpeg'
+const heroSrc = ref(null)
+const heroAlt = ref('Spokane Taiko members')
+const heroLoaded = ref(false)
+
+async function loadHeroPhoto() {
+  try {
+    const { data } = await siteSettingsAPI.get()
+    if (data?.homepage_photo_alt) heroAlt.value = data.homepage_photo_alt
+    heroSrc.value = data?.homepage_photo_url || DEFAULT_HERO_PHOTO
+  } catch (err) {
+    console.error('Error loading homepage photo:', err)
+    heroSrc.value = DEFAULT_HERO_PHOTO
+  }
+}
+
+function useDefaultHeroPhoto() {
+  if (heroSrc.value === DEFAULT_HERO_PHOTO) {
+    heroLoaded.value = true // nothing else to fall back to; drop the placeholder
+    return
+  }
+  heroAlt.value = 'Spokane Taiko members'
+  heroSrc.value = DEFAULT_HERO_PHOTO
+}
 
 async function loadAnnouncements() {
   try {
@@ -25,6 +51,8 @@ async function loadAnnouncements() {
 }
 
 onMounted(async () => {
+  loadHeroPhoto()
+
   while (authLoading.value) {
     await new Promise((resolve) => setTimeout(resolve, 50))
   }
@@ -37,8 +65,15 @@ onMounted(async () => {
   <div class="home">
     <h1>Spokane Taiko</h1>
 
-    <div class="hero-photo">
-      <img src="/group_photo_outside.jpeg" alt="Spokane Taiko members" class="hero-image" />
+    <div class="hero-photo" :class="{ loaded: heroLoaded }">
+      <img
+        v-if="heroSrc"
+        :src="heroSrc"
+        :alt="heroAlt"
+        class="hero-image"
+        @load="heroLoaded = true"
+        @error="useDefaultHeroPhoto"
+      />
     </div>
 
     <div class="hero-video">
@@ -97,11 +132,22 @@ h1 {
   box-shadow: var(--shadow-lg);
 }
 
+.hero-photo:not(.loaded) {
+  aspect-ratio: 3 / 2;
+  background: #f0f0f0;
+}
+
 .hero-image {
   width: 100%;
   height: auto;
   display: block;
   object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hero-photo.loaded .hero-image {
+  opacity: 1;
 }
 
 h2 {
