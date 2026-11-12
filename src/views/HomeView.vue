@@ -9,7 +9,7 @@ const { loading: authLoading } = useAuth()
 const announcements = ref([])
 const loading = ref(true)
 const error = ref(null)
-const videoId = ref('wHDxPHs3GhA')
+const videoId = ref('F4ITtClY4fI')
 
 // Homepage photo: admins can pick one in Admin -> Photos; otherwise use the default
 const DEFAULT_HERO_PHOTO = '/group_photo_outside.jpeg'
